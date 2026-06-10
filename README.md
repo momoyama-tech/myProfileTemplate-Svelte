@@ -1,82 +1,76 @@
 # myProfileTemplate-Svelte
 
-## 概要
+SvelteKit で自己紹介サイトを作り、GitHub Pages に公開するためのテンプレートです。
+フォークして GitHub Pages を有効にするだけで、
 
-sveltekitを使って、自己紹介サイトを作るレポジトリです。
-とりあえずフォークして、GitHub PagesとGitHub Actionの設定をすれば https://{自分のGitHubアカウント名}.GitHub.io/{フォークした時のレポジトリ名}/ で自己紹介サイトを公開することができます。
+```
+https://{GitHubアカウント名}.github.io/{リポジトリ名}/
+```
 
-## 手順(初回)
+で自己紹介サイトが公開されます。`main` ブランチに push するたびに、GitHub Actions が自動でビルド・デプロイします。
 
-1. GitHubのアカウントを作成
-1. GitHub Educationの申請
-1. 公開鍵の作成・登録
-1. myProfileTemplate-Svelte レポジトリのfork
-1. GitHub Pages の設定
-1. GitHub Action の設定
-1. svelte.config.jsを修正する
+## 技術スタック
 
-### GitHubのアカウントを作成
+- [SvelteKit](https://svelte.dev/docs/kit)（`adapter-static` で静的サイト出力）
+- [Svelte 5](https://svelte.dev/)
+- [Tailwind CSS v4](https://tailwindcss.com/)
+- [Vite](https://vite.dev/) / [Vitest](https://vitest.dev/) / [Playwright](https://playwright.dev/)
+- GitHub Actions による GitHub Pages への自動デプロイ
 
-後日追記
+## 公開までの手順（初回のみ）
 
-### GitHub Educationの申請
+1. このリポジトリを **Fork** する。
+2. Fork したリポジトリの **Settings → Pages** を開く。
+3. **Build and deployment** の **Source** を **GitHub Actions** に変更する。
+4. **Actions** タブを開き、ワークフローの実行を有効にする。
+5. `main` ブランチに push する（または Actions から手動実行する）。
 
-後日追記
+> [!NOTE]
+> ベースパス（`/リポジトリ名`）は GitHub Actions が自動で設定します。
+> 以前のように `svelte.config.js` を手で書き換える必要はありません。
 
-### 公開鍵の作成・登録
+## ローカルでの開発
+
+Node.js 20 以上を推奨します。
 
 ```bash
-$ ssh-keygen -t rsa -b 4096 -C "自分のメールアドレス"
-# エンターを連打
-$ cat ~/.ssh/id_rsa.pub
-# 出てきた文字列をコピーする
+# 依存関係のインストール
+npm install
+
+# 開発サーバーの起動（http://localhost:5173）
+npm run dev
+
+# 本番ビルドのプレビュー
+npm run build
+npm run preview
 ```
 
-1. GitHubをブラウザで開いてアイコンをクリックする。
-1. Setting を押す。
-1. SSH and GPG keys をクリックする。
-1. New SSH Key を押して、タイトルを設定、コピーした内容を貼り付けて保存する。
+サイトの中身は `src/routes/+page.svelte` を編集してカスタマイズします。
+共通レイアウトは `src/routes/+layout.svelte`、グローバル CSS は `src/app.css` です。
 
-### myProfileTemplate-Svelte レポジトリのfork
+## よく使うコマンド
 
-後日追記
+| コマンド            | 内容                                  |
+| ------------------- | ------------------------------------- |
+| `npm run dev`       | 開発サーバーを起動                    |
+| `npm run build`     | 本番用に静的ビルド（`build/` に出力） |
+| `npm run preview`   | ビルド結果をローカルで確認            |
+| `npm run check`     | svelte-check による型チェック         |
+| `npm run lint`      | Prettier + ESLint によるチェック      |
+| `npm run format`    | Prettier で自動整形                   |
+| `npm run test:unit` | Vitest によるユニットテスト           |
+| `npm run test:e2e`  | Playwright による E2E テスト          |
 
-### GitHub Pages の設定
+## デプロイの流れ
 
-1. 上部のメニューから　Settings へ移動する。
-1. 左のメニューから、Pages へ移動する。
-1. Build and deployment の下のセレクトボックスを GitHub Actions に変更する。
-
-### GitHub Actions の設定
-
-1. 上部のメニューから　Actions へ移動する。
-1. 緑のボタンを押す。
-
-### aaa
-
-svelte.config.js のレポジトリのパスを自身がフォークの際に設定したレポジトリ名に修正する。
-
-```js
-// svelte.config.js
-// 例は、レポジトリ名は myProfileTemplate-Svelte となっている。
-paths: {
-            base: production ? '/myProfileTemplate-Svelte' : '',
-        }
-```
-
-GitHubにプッシュする。
+`main` に変更を push すると、`.github/workflows/pages.yml` が次を自動で行います。
 
 ```bash
-$ git add .
-$ git commit -m "feat: change base path"
-$ git push origin main
+git add .
+git commit -m "コミットメッセージ"
+git push origin main
 ```
 
-## 手順(開発)
-
-```bash
-$ git pull origin main
-$ git add .
-$ git commit -m "コミットメッセージ"
-$ git push origin main
-```
+1. 依存関係をインストール（`npm ci`）
+2. `BASE_PATH=/リポジトリ名` を設定して `npm run build`
+3. `build/` を GitHub Pages にデプロイ

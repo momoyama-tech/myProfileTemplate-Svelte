@@ -1,18 +1,21 @@
 import adapter from '@sveltejs/adapter-static';
-const production = process.env.NODE_ENV === 'production';
+
+// GitHub Actions sets BASE_PATH to "/<リポジトリ名>"。
+// ローカル開発時は未設定なので空文字（ルート）になる。
+// これにより、フォーク後に svelte.config.js を手で書き換える必要はない。
+const base = process.env.BASE_PATH ?? '';
 
 /** @type {import('@sveltejs/kit').Config} */
 const config = {
 	kit: {
-		// adapter-auto only supports some environments, see https://svelte.dev/docs/kit/adapter-auto for a list.
-		// If your environment is not supported, or you settled on a specific environment, switch out the adapter.
-		// See https://svelte.dev/docs/kit/adapters for more information about adapters.
+		// adapter-static で静的サイトとして書き出し、GitHub Pages に公開する。
+		// See https://svelte.dev/docs/kit/adapter-static
 		adapter: adapter({
-			fallback: 'index.html' // すべてのリクエストを index.html にフォールバック
+			fallback: 'index.html' // すべてのリクエストを index.html にフォールバック（SPA 的に動かす）
 		}),
 		paths: {
-            base: production ? '/myProfileTemplate-Svelte' : '',
-        }
+			base
+		}
 	}
 };
 
